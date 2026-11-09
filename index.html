@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Soleil</title>
+<meta name="description" content="Lever, coucher, direction du soleil et météo, où que tu sois">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#20294f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Soleil">
+<link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="view">
+  <div id="tab-today" class="panel"></div>
+  <div id="tab-week" class="panel" hidden></div>
+  <div id="tab-sky" class="panel" hidden></div>
+  <div id="tab-book" class="panel" hidden></div>
+</main>
+
+<nav class="tabs" aria-label="Navigation">
+  <button type="button" data-tab="today"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 8V4M4.5 10.5 6 12M19.5 10.5 18 12M9 21h6"/></svg>Ce soir</button>
+  <button type="button" data-tab="week"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M8 14h2M14 14h2"/></svg>Semaine</button>
+  <button type="button" data-tab="sky"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Ciel</button>
+  <button type="button" data-tab="book"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h13v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM4 17a2 2 0 0 1 2-2h13M9 8h6"/></svg>Carnet</button>
+</nav>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="suncalc.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
