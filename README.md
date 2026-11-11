@@ -21,7 +21,16 @@ python -m http.server 8000
 
 Ouvre ensuite http://localhost:8000. Le lieu se choisit dans **Carnet > Réglages**.
 
-Pour la mise en ligne, envoie les fichiers sur n'importe quel hébergement statique en HTTPS. Le HTTPS est nécessaire pour l'installation, le mode hors ligne, la géolocalisation et la boussole.
+## Mise en ligne
+
+Envoie les fichiers sur un hébergement statique en HTTPS, à la racine du domaine. Le HTTPS est nécessaire pour l'installation, le mode hors ligne, la géolocalisation et la boussole.
+
+Avant de publier :
+
+1. **Mentions légales.** Complète la section « Hébergeur » de `infos.html` avec le nom, l'adresse et le téléphone de ton hébergeur. En France, un particulier peut rester anonyme s'il a donné son identité à l'hébergeur.
+2. **Serveur Apache** (par exemple OVH) : le fichier caché `.htaccess` force le HTTPS, retire le « www », affiche la page 404 et ajoute les en-têtes de sécurité. Sur un autre serveur, reproduis ces réglages.
+3. **Référencement.** Crée un `sitemap.xml` avec l'adresse de tes pages, puis décommente la ligne `Sitemap` de `robots.txt`. Pour une image d'aperçu sur les réseaux sociaux, ajoute dans `index.html` une balise `og:image` avec l'adresse complète d'une image de 1200 × 630 px.
+4. **Services externes.** Si tu en ajoutes un, autorise son adresse dans `connect-src` de la ligne `Content-Security-Policy` du `.htaccess`.
 
 ## Tests
 
@@ -35,7 +44,7 @@ Un fichier modifié arrive à l'ouverture suivante de l'appli. Si tu ajoutes ou 
 
 ## Vie privée
 
-Il n'y a ni compte ni statistiques. Le lieu, les notes et les spots restent dans le navigateur. Les coordonnées sont envoyées à [Open-Meteo](https://open-meteo.com/) pour obtenir la météo et le relief, et le nom recherché pour trouver une ville.
+Il n'y a ni compte, ni cookie, ni statistiques. Le lieu, les notes et les spots restent dans le navigateur. Les coordonnées sont envoyées à [Open-Meteo](https://open-meteo.com/) pour obtenir la météo et le relief, et le nom recherché pour trouver une ville.
 
 ## Limites
 

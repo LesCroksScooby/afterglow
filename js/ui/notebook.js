@@ -57,8 +57,9 @@ export function renderNotebook(el, app) {
     '<section class="block"><h2>Sauvegarde</h2><p class="muted">Tes notes restent sur ce téléphone. Exporte-les de temps en temps.</p>' +
       '<div class="actions"><button type="button" class="btn" data-act="export">Exporter</button>' +
       '<label class="btn">Importer<input type="file" id="importFile" accept="application/json,.json" hidden></label></div></section>' +
-    '<footer class="foot"><p>Calculs : SunCalc. Météo et relief : Open-Meteo. Heure locale du lieu.' +
+    '<footer class="foot"><p>Calculs : SunCalc. Météo et relief : <a href="https://open-meteo.com/">Open-Meteo</a>. Heure locale du lieu.' +
       (wx.stamp ? ' Météo mise à jour à ' + hm(new Date(wx.stamp)) + '.' : '') + '</p>' +
-      '<button type="button" class="link" data-act="refresh">Actualiser la météo</button></footer>' +
+      '<button type="button" class="link" data-act="refresh">Actualiser la météo</button>' +
+      '<p><a class="link" href="infos.html">Mentions légales et confidentialité</a></p></footer>' +
     '</div>';
 }

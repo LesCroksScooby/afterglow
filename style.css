@@ -227,6 +227,18 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
 .error { color: var(--rouge); font-size: 15px; min-height: 0; }
 .error:empty { display: none; }
 .foot { color: var(--schiste); font-size: 14px; }
+a { color: inherit; text-underline-offset: 3px; }
+a.link { display: inline-flex; align-items: center; }
+a.btn { text-decoration: none; }
+
+/* Pages de texte : infos et 404 */
+.doc { padding-bottom: 48px; max-width: 680px; }
+.doc h1 { font-size: 40px; }
+.doc h3 { font-size: 17px; font-weight: 600; margin: 14px 0 4px; }
+.doc p { line-height: 1.6; }
+.doc section p + p { margin-top: 8px; }
+.big-num { font-family: var(--serif); font-size: 120px; line-height: 1; color: var(--couchant); }
+.noscript { padding: 24px var(--gutter); }
 
 /* Barre d'onglets */
 .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; height: var(--nav); padding-bottom: env(safe-area-inset-bottom); display: grid; grid-template-columns: repeat(4, 1fr); background: var(--ardoise); border-top: 1px solid var(--trait); }

@@ -4,11 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Soleil</title>
-<meta name="description" content="Lever, coucher, direction du soleil et météo, où que tu sois">
-<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Heure du coucher et du lever du soleil où que tu sois, avec une prévision de la beauté du ciel, la météo, la lune et une boussole.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Soleil">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Soleil : coucher de soleil et prévision du ciel">
+<meta property="og:description" content="L’heure du coucher, et si ça vaut le coup de sortir le regarder ce soir.">
+<meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#20294f">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -18,6 +24,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<noscript><p class="noscript">Cette appli a besoin de JavaScript pour calculer les heures du soleil. <a href="infos.html">Mentions légales et confidentialité</a></p></noscript>
 <main id="view">
   <div id="tab-today" class="panel"></div>
   <div id="tab-week" class="panel" hidden></div>

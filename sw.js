@@ -1,11 +1,11 @@
 /* Service worker : ouverture immédiate depuis le cache, mise à jour en arrière-plan.
    Une modification de fichier existant arrive toute seule à la prochaine ouverture.
    Change VERSION seulement si tu ajoutes ou renommes un fichier dans la liste. */
-const VERSION = 'soleil-v3';
+const VERSION = 'soleil-v4';
 const FILES = [
-  './', 'index.html', 'style.css', 'suncalc.js', 'manifest.webmanifest',
+  './', 'index.html', 'infos.html', 'style.css', 'suncalc.js', 'manifest.webmanifest',
   'fonts/instrument-serif.woff2',
-  'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png',
+  'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png', 'favicon.ico',
   'js/main.js', 'js/config.js', 'js/time.js', 'js/astro.js', 'js/score.js', 'js/horizon.js', 'js/store.js',
   'js/weather.js', 'js/model.js', 'js/journal.js', 'js/spots.js', 'js/calendar.js', 'js/events.js', 'js/compass.js', 'js/share.js', 'js/sound.js',
   'js/ui/dom.js', 'js/ui/icons.js', 'js/ui/scene.js', 'js/ui/today.js', 'js/ui/week.js', 'js/ui/sky.js', 'js/ui/notebook.js'
