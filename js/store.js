@@ -1,4 +1,4 @@
-/* Lecture et écriture locales qui ne plantent jamais (mode privé, quota plein…). */
+/* Local reads and writes that never crash (private mode, full quota…). */
 export const store = {
   get(key, fallback) {
     try {

@@ -1,8 +1,8 @@
 {
-  "name": "Soleil",
-  "short_name": "Soleil",
-  "description": "Lever, coucher, direction du soleil et météo, où que tu sois",
-  "lang": "fr",
+  "name": "Afterglow",
+  "short_name": "Afterglow",
+  "description": "Sunset and sunrise times, sky forecast and compass, wherever you are",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -10,8 +10,23 @@
   "background_color": "#262b36",
   "theme_color": "#20294f",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

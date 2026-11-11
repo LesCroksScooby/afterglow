@@ -1,9 +1,9 @@
-/* Soleil et lune (SunCalc, sans réseau). Altitudes et azimuts sont en degrés. */
+/* Sun and moon (SunCalc, no network needed). Altitudes and azimuths are in degrees. */
 import { HOME } from './config.js';
 import { isD, parse, localTs, tzOffsetMin } from './time.js';
 
 const SC = globalThis.SunCalc;
-/* heures bleues : soleil entre −8° et −4° */
+/* blue hours: sun between −8° and −4° */
 SC.addTime(-8, 'blueAMStart', 'blueEveEnd');
 SC.addTime(-4, 'blueAMEnd', 'blueEveStart');
 
@@ -35,7 +35,7 @@ export function sunDay(str) {
   return S;
 }
 
-/* altitude toutes les 10 min, pour la courbe du jour */
+/* altitude every 10 min, for the day curve */
 export function dayCurve(S) {
   if (S.pts) return S.pts;
   const [y, m, d] = parse(S.str);
@@ -49,21 +49,21 @@ export function dayCurve(S) {
 }
 
 export function phaseName(alt, morning) {
-  if (alt >= 6) return 'Plein jour';
-  if (alt >= -0.833) return 'Heure dorée';
-  if (alt >= -4) return morning ? 'Aube civile' : 'Crépuscule civil';
-  if (alt >= -8) return 'Heure bleue';
-  if (alt >= -12) return morning ? 'Aube nautique' : 'Crépuscule nautique';
-  if (alt >= -18) return morning ? 'Aube astronomique' : 'Crépuscule astronomique';
-  return 'Nuit noire';
+  if (alt >= 6) return 'Daylight';
+  if (alt >= -0.833) return 'Golden hour';
+  if (alt >= -4) return morning ? 'Civil dawn' : 'Civil dusk';
+  if (alt >= -8) return 'Blue hour';
+  if (alt >= -12) return morning ? 'Nautical dawn' : 'Nautical dusk';
+  if (alt >= -18) return morning ? 'Astronomical dawn' : 'Astronomical dusk';
+  return 'Full darkness';
 }
 
 export const moonName = ph =>
-  ph < .03 || ph >= .97 ? 'Nouvelle lune' : ph < .22 ? 'Premier croissant' : ph < .28 ? 'Premier quartier' :
-  ph < .47 ? 'Gibbeuse croissante' : ph < .53 ? 'Pleine lune' : ph < .72 ? 'Gibbeuse décroissante' :
-  ph < .78 ? 'Dernier quartier' : 'Dernier croissant';
+  ph < .03 || ph >= .97 ? 'New moon' : ph < .22 ? 'Waxing crescent' : ph < .28 ? 'First quarter' :
+  ph < .47 ? 'Waxing gibbous' : ph < .53 ? 'Full moon' : ph < .72 ? 'Waning gibbous' :
+  ph < .78 ? 'Last quarter' : 'Waning crescent';
 
-/* prochaine nouvelle (0) ou pleine (0.5) lune */
+/* next new (0) or full (0.5) moon */
 export function nextPhase(fromTs, target) {
   const f = ts => ((SC.getMoonIllumination(new Date(ts)).phase - target + 1.5) % 1) - 0.5;
   let prev = f(fromTs);

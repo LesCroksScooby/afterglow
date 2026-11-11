@@ -1,7 +1,7 @@
-/* Tes lieux de photo : le soleil sera-t-il dans l'axe, et quand partir ? */
+/* Your viewpoints: will the sun line up, and when should you leave? */
 import { store } from './store.js';
 
-const KEY = 'soleil-spots-v1';
+const KEY = 'afterglow-spots-v1';
 export const loadSpots = () => store.get(KEY, []);
 export const saveSpots = list => store.set(KEY, list);
 
@@ -15,12 +15,12 @@ export function parseCoords(text) {
 const angleGap = (a, b) => Math.abs(((a - b + 540) % 360) - 180);
 
 export function alignment(eventAz, facing) {
-  if (facing == null || eventAz == null) return { level: 1, text: 'Vue dégagée tout autour' };
+  if (facing == null || eventAz == null) return { level: 1, text: 'Open view all round' };
   const gap = angleGap(eventAz, facing);
-  if (gap <= 20) return { level: 2, text: 'Dans l’axe' };
-  if (gap <= 45) return { level: 1, text: 'De biais' };
-  return { level: 0, text: 'Hors champ' };
+  if (gap <= 20) return { level: 2, text: 'Right in line' };
+  if (gap <= 45) return { level: 1, text: 'At an angle' };
+  return { level: 0, text: 'Out of view' };
 }
 
-/* partir pour arriver 30 min avant la disparition du soleil */
+/* leave so as to arrive 30 min before the sun disappears */
 export const departure = (realTs, travelMin) => realTs - (30 + (travelMin || 0)) * 60000;

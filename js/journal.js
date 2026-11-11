@@ -1,8 +1,8 @@
-/* Carnet d'observations : tes notes corrigent le score avec le temps. */
+/* Ratings journal: your ratings correct the score over time. */
 import { store } from './store.js';
 import { calibrationOffset } from './score.js';
 
-const KEY = 'soleil-carnet-v1';
+const KEY = 'afterglow-journal-v1';
 export const loadJournal = () => store.get(KEY, []);
 export const journalOffset = () => calibrationOffset(loadJournal());
 export const entryFor = (date, kind) => loadJournal().find(e => e.date === date && e.kind === kind) || null;
@@ -18,7 +18,7 @@ export function removeEntry(date, kind) {
   store.set(KEY, loadJournal().filter(e => !(e.date === date && e.kind === kind)));
 }
 
-/* Remplace le carnet par une sauvegarde, après vérification du contenu. Renvoie le nombre de notes, ou null. */
+/* Replaces the journal with a backup, after checking its content. Returns the number of ratings, or null. */
 export function importJournal(text) {
   let data;
   try { data = JSON.parse(text); } catch (e) { return null; }

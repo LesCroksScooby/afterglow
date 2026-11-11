@@ -1,12 +1,12 @@
-/* Score « beau lever / coucher » (0–100).
-   Idée : pour que le ciel s'embrase il faut deux choses.
-   1. Que la lumière arrive : pas de nuages bas ou moyens sur sa route, vers le soleil.
-   2. Qu'elle ait une toile : des nuages hauts ou moyens au-dessus de l'observateur.
-   Un ciel vide reste joli mais sobre : il plafonne autour de 50. */
+/* Sunrise / sunset beauty score (0–100).
+   The idea: a sky lights up when two things come together.
+   1. The light gets through: no low or mid clouds on its path, towards the sun.
+   2. It has a canvas: high or mid clouds above the observer.
+   An empty sky stays pretty but subtle: it tops out around 50. */
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
-/* courbe continue : quantité de nuages hauts/moyens → qualité de la toile (0–1) */
+/* smooth curve: amount of high/mid cloud → canvas quality (0–1) */
 const CANVAS = [[0, 0], [15, .25], [35, .9], [60, 1], [85, .6], [100, .3]];
 export function canvasQuality(cover) {
   const c = clamp(cover, 0, 100);
@@ -17,7 +17,7 @@ export function canvasQuality(cover) {
   return CANVAS[CANVAS.length - 1][1];
 }
 
-/* part du ciel qui bloque la lumière sur sa route (0–100), du point le plus proche au plus loin */
+/* share of the sky blocking the light on its path (0–100), from nearest to farthest point */
 export function pathBlockage(path) {
   const weights = [.4, .35, .25];
   let sum = 0, total = 0;
@@ -30,15 +30,15 @@ export function pathBlockage(path) {
 }
 
 export function labelFor(score) {
-  if (score >= 80) return { label: 'Exceptionnel', verdict: 'À ne pas rater' };
-  if (score >= 60) return { label: 'Très beau', verdict: 'Ça vaut le coup' };
-  if (score >= 40) return { label: 'Sobre', verdict: 'Joli mais discret' };
-  if (score >= 20) return { label: 'Fade', verdict: 'Sans plus' };
-  return { label: 'Bouché', verdict: 'Reste au chaud' };
+  if (score >= 80) return { label: 'Exceptional', verdict: 'Don’t miss it' };
+  if (score >= 60) return { label: 'Gorgeous', verdict: 'Worth going out' };
+  if (score >= 40) return { label: 'Subtle', verdict: 'Pretty but subtle' };
+  if (score >= 20) return { label: 'Dull', verdict: 'Nothing special' };
+  return { label: 'Clouded out', verdict: 'Stay in' };
 }
 
-/* w : météo locale à l'heure de l'événement ; path : nuages vers le soleil, ou null */
-export function computeScore(w, path, where = 'vers le soleil') {
+/* w: local weather at the time of the event; path: clouds towards the sun, or null */
+export function computeScore(w, path, where = 'towards the sun') {
   if (!w || w.total == null) return null;
   const low = w.low ?? 0, mid = w.mid ?? 0, high = w.high ?? 0;
   const vis = w.vis ?? 20000, pp = w.pp ?? 0, pr = w.precip ?? 0;
@@ -58,28 +58,28 @@ export function computeScore(w, path, where = 'vers le soleil') {
   s = Math.round(clamp(s, 0, 100));
 
   const reasons = [];
-  if (pr > .2 || pp >= 60) reasons.push('Risque de pluie');
-  if (blocked != null && blocked >= 55) reasons.push('Nuages épais ' + where + ', la lumière ne passera pas');
-  else if (blocked != null && blocked < 25) reasons.push('Route dégagée ' + where);
-  if (low >= 50) reasons.push('Nuages bas au-dessus de toi');
-  if (light > .5 && cover >= 25 && cover <= 80) reasons.push('Nuages hauts bien placés pour prendre la couleur');
-  else if (light > .5 && cover < 15) reasons.push('Ciel presque vide, peu de nuages pour prendre la couleur');
-  else if (cover > 85 && low < 50) reasons.push('Voile très épais, couleurs atténuées');
-  if (vis < 5000) reasons.push('Brume ou brouillard');
-  if (!reasons.length) reasons.push('Rien de marquant annoncé');
+  if (pr > .2 || pp >= 60) reasons.push('Rain likely');
+  if (blocked != null && blocked >= 55) reasons.push('Thick clouds ' + where + ', the light won’t get through');
+  else if (blocked != null && blocked < 25) reasons.push('Clear path ' + where);
+  if (low >= 50) reasons.push('Low clouds overhead');
+  if (light > .5 && cover >= 25 && cover <= 80) reasons.push('High clouds well placed to catch the colour');
+  else if (light > .5 && cover < 15) reasons.push('Almost empty sky, few clouds to catch the colour');
+  else if (cover > 85 && low < 50) reasons.push('Very thick veil, muted colours');
+  if (vis < 5000) reasons.push('Haze or fog');
+  if (!reasons.length) reasons.push('Nothing remarkable forecast');
 
   return { score: s, light, canvas, blocked, directional: blocked != null, reasons: reasons.slice(0, 2), w };
 }
 
 export function reliability(lead) {
-  if (lead < 0) return { level: 0, text: 'Jour passé' };
-  if (lead <= 1) return { level: 3, text: 'Prévision fiable' };
-  if (lead <= 3) return { level: 2, text: 'Assez fiable' };
-  if (lead <= 5) return { level: 1, text: 'À confirmer' };
-  return { level: 0, text: 'Simple tendance' };
+  if (lead < 0) return { level: 0, text: 'Past day' };
+  if (lead <= 1) return { level: 3, text: 'Reliable forecast' };
+  if (lead <= 3) return { level: 2, text: 'Fairly reliable' };
+  if (lead <= 5) return { level: 1, text: 'Needs confirming' };
+  return { level: 0, text: 'Rough trend' };
 }
 
-/* Carnet : écart moyen entre tes notes et le score brut, prudent tant qu'il y a peu de notes. */
+/* Journal: average gap between your ratings and the raw score, cautious while there are few ratings. */
 export function calibrationOffset(entries) {
   const used = entries.filter(e => e.raw != null && e.rating != null);
   if (used.length < 3) return 0;

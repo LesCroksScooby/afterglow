@@ -1,4 +1,4 @@
-/* Icônes au trait, dessinées pour le site (elles héritent de la couleur du texte). */
+/* Line icons drawn for the app (they inherit the text colour). */
 const P = {
   sunset: '<path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 8V4M4.5 10.5 6 12M19.5 10.5 18 12M9 21h6"/>',
   week: '<path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M8 14h2M14 14h2"/>',

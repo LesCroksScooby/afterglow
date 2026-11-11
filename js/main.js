@@ -1,4 +1,4 @@
-/* Démarrage, état de l'appli et gestion des gestes. */
+/* Start-up, app state and gesture handling. */
 import { HOME, WX_TTL, saveLocation } from './config.js';
 import { sunDay } from './astro.js';
 import { loadWeather, wx } from './weather.js';
@@ -9,7 +9,7 @@ import { loadSpots, parseCoords, saveSpots } from './spots.js';
 import { buildIcs } from './calendar.js';
 import { deliverFile, eveningImage } from './share.js';
 import { startCompass, stopCompass } from './compass.js';
-import { addDays, cap, hm, isD, longDate, localNow } from './time.js';
+import { addDays, hm, isD, longDate, localNow } from './time.js';
 import { armSound, play, setSound, soundOn } from './sound.js';
 import { $, esc, toast } from './ui/dom.js';
 import { renderToday, updateCount } from './ui/today.js';
@@ -23,7 +23,7 @@ const app = {
   state,
   spots: loadSpots(),
   skyHour: null,
-  /* En direct, « Ce soir » passe au lendemain 20 min après l'événement. */
+  /* In live mode, "Tonight" moves on to the next day 20 min after the event. */
   liveDate() {
     const today = localNow().str, S = sunDay(today);
     const t = state.kind === 'set' ? S.T.sunset : S.T.sunrise;
@@ -58,7 +58,7 @@ function setDate(str) {
   state.skyMin = null;
   render();
 }
-/* après un changement de jour ou d'événement, une petite note signale un beau ciel prévu */
+/* after changing day or event, a soft chime signals a promising sky */
 function promiseSound() {
   const c = eventInfo(app.viewDate(), state.kind).scored;
   if (c && c.score >= 60) play('shimmer', .12);
@@ -81,49 +81,49 @@ function rate(date, kind, rating) {
   const raw = prev && prev.raw != null ? prev.raw : (E.scored ? E.scored.raw : null);
   saveEntry({ date, kind, rating, raw, note: prev ? prev.note : '' });
   play('star' + rating);
-  toast('Note enregistrée');
+  toast('Rating saved');
   render();
 }
 
 async function remind(date, kind) {
   const E = eventInfo(date, kind);
-  const name = kind === 'set' ? 'Coucher' : 'Lever';
+  const name = kind === 'set' ? 'Sunset' : 'Sunrise';
   const ics = buildIcs({
     uid: date + '-' + kind, start: +E.time,
-    title: name + ' du soleil, ' + HOME.name,
-    description: E.scored ? 'Score prévu : ' + E.scored.score + '/100. ' + E.scored.reasons.join('. ') + '.' : 'Heure calculée à ' + hm(E.time) + '.'
+    title: name + ', ' + HOME.name,
+    description: E.scored ? 'Forecast score: ' + E.scored.score + '/100. ' + E.scored.reasons.join('. ') + '.' : 'Calculated time: ' + hm(E.time) + '.'
   });
-  const res = await deliverFile(new Blob([ics], { type: 'text/calendar' }), 'rappel-' + date + '.ics', name + ' du soleil');
-  if (res !== 'cancelled') { play('success'); toast('Ouvre le fichier pour l’ajouter à ton agenda. Alarme 1 h avant.'); }
+  const res = await deliverFile(new Blob([ics], { type: 'text/calendar' }), 'reminder-' + date + '.ics', name);
+  if (res !== 'cancelled') { play('success'); toast('Open the file to add it to your calendar. Alarm 1 hour before.'); }
 }
 
 async function share() {
   const E = eventInfo(app.viewDate(), state.kind);
   const blob = await eveningImage(E);
-  const res = await deliverFile(blob, 'soleil-' + E.str + '.png', cap(longDate(E.S.ref)));
+  const res = await deliverFile(blob, 'afterglow-' + E.str + '.png', longDate(E.S.ref));
   if (res !== 'cancelled') play('success');
-  if (res === 'saved') toast('Image enregistrée');
+  if (res === 'saved') toast('Image saved');
 }
 
 async function exportData() {
   const text = JSON.stringify({ version: 1, journal: loadJournal(), spots: app.spots }, null, 1);
-  await deliverFile(new Blob([text], { type: 'application/json' }), 'carnet-soleil.json', 'Carnet Soleil');
+  await deliverFile(new Blob([text], { type: 'application/json' }), 'afterglow-journal.json', 'Afterglow journal');
 }
 
 function measureSpot(s) {
-  fetchProfile(s.lat, s.lon).then(render).catch(() => toast('Relief non mesuré : réseau indisponible'));
+  fetchProfile(s.lat, s.lon).then(render).catch(() => toast('Terrain not measured: no connection'));
 }
 
 function locate() {
-  if (!navigator.geolocation) { play('error'); toast('Position non disponible sur cet appareil'); return; }
+  if (!navigator.geolocation) { play('error'); toast('Location isn’t available on this device'); return; }
   play('tap');
-  toast('Recherche de ta position…');
+  toast('Finding your location…');
   navigator.geolocation.getCurrentPosition(pos => {
     const input = $('#spotForm [name=coords]');
     if (input) input.value = pos.coords.latitude.toFixed(5) + ', ' + pos.coords.longitude.toFixed(5);
     play('success');
-    toast('Position trouvée');
-  }, () => { play('error'); toast('Position refusée : saisis les coordonnées à la main'); }, { enableHighAccuracy: true, timeout: 12000 });
+    toast('Location found');
+  }, () => { play('error'); toast('Location denied: type the coordinates instead'); }, { enableHighAccuracy: true, timeout: 12000 });
 }
 
 async function toggleAim() {
@@ -138,50 +138,50 @@ async function toggleAim() {
   });
   if (res !== 'ok') {
     play('error');
-    toast(res === 'denied' ? 'Accès à la boussole refusé' : 'Pas de boussole sur cet appareil');
+    toast(res === 'denied' ? 'Compass access denied' : 'No compass on this device');
     return;
   }
   play('tap');
   state.aiming = true;
-  btn.lastChild.textContent = 'Arrêter de viser';
-  $('#aimHint').textContent = 'Tiens le téléphone à plat et tourne-toi.';
+  btn.lastChild.textContent = 'Stop aiming';
+  $('#aimHint').textContent = 'Hold the phone flat and turn around.';
 }
 
-/* Changer de lieu : la météo gardée ne vaut plus, et l'heure locale change. */
+/* Changing place: the saved weather no longer applies, and local time changes. */
 function useLocation(place) {
   saveLocation(place);
-  try { localStorage.removeItem('soleil-wx-v2'); } catch (e) { /* rien */ }
+  try { localStorage.removeItem('afterglow-wx-v2'); } catch (e) { /* nothing to do */ }
   location.reload();
 }
 
 let places = [];
 async function searchPlace(q) {
-  if (!q) { play('error'); toast('Saisis le nom d’une ville'); return; }
+  if (!q) { play('error'); toast('Type a city name'); return; }
   play('tap');
   const box = $('#placeResults');
   try {
-    const url = 'https://geocoding-api.open-meteo.com/v1/search?count=5&language=fr&format=json&name=' + encodeURIComponent(q);
+    const url = 'https://geocoding-api.open-meteo.com/v1/search?count=5&language=en&format=json&name=' + encodeURIComponent(q);
     const r = await fetch(url);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     places = ((await r.json()).results || []).filter(p => p.timezone);
     box.innerHTML = places.length
       ? places.map((p, i) => '<button type="button" class="btn" data-act="place" data-i="' + i + '">' + esc([p.name, p.admin1, p.country].filter(Boolean).join(', ')) + '</button>').join('')
-      : '<p class="muted">Aucun lieu trouvé. Essaie un autre nom.</p>';
+      : '<p class="muted">No place found. Try another name.</p>';
   } catch (e) {
     play('error');
-    box.innerHTML = '<p class="muted">Recherche impossible : vérifie la connexion.</p>';
+    box.innerHTML = '<p class="muted">Search failed: check your connection.</p>';
   }
 }
 
 function useMyPosition() {
-  if (!navigator.geolocation) { play('error'); toast('Position non disponible sur cet appareil'); return; }
-  toast('Recherche de ta position…');
+  if (!navigator.geolocation) { play('error'); toast('Location isn’t available on this device'); return; }
+  toast('Finding your location…');
   navigator.geolocation.getCurrentPosition(pos => useLocation({
-    name: 'Ma position',
+    name: 'My location',
     lat: +pos.coords.latitude.toFixed(4),
     lon: +pos.coords.longitude.toFixed(4),
     tz: Intl.DateTimeFormat().resolvedOptions().timeZone
-  }), () => { play('error'); toast('Position refusée : cherche plutôt une ville'); }, { timeout: 12000 });
+  }), () => { play('error'); toast('Location denied: search for a city instead'); }, { timeout: 12000 });
 }
 
 const ACTIONS = {
@@ -208,17 +208,17 @@ const ACTIONS = {
   aim: toggleAim,
   locate,
   export: exportData,
-  refresh: () => { play('tap'); toast('Actualisation…'); loadWeather(true, render); },
+  refresh: () => { play('tap'); toast('Refreshing…'); loadWeather(true, render); },
   sound: () => {
     setSound(!soundOn());
     if (soundOn()) play('success');
     render();
   },
   'del-entry': b => {
-    if (confirm('Effacer cette note ?')) { removeEntry(b.dataset.date, b.dataset.kind); render(); }
+    if (confirm('Delete this rating?')) { removeEntry(b.dataset.date, b.dataset.kind); render(); }
   },
   'del-spot': b => {
-    if (confirm('Supprimer ce spot ?')) {
+    if (confirm('Remove this spot?')) {
       app.spots = app.spots.filter(s => s.id !== b.dataset.id);
       saveSpots(app.spots);
       render();
@@ -249,8 +249,8 @@ document.addEventListener('change', async e => {
     const text = await t.files[0].text();
     const n = importJournal(text);
     let parsed = null;
-    try { parsed = JSON.parse(text); } catch (err) { /* déjà signalé par importJournal */ }
-    if (n === null) { play('error'); toast('Ce fichier n’est pas une sauvegarde du carnet'); return; }
+    try { parsed = JSON.parse(text); } catch (err) { /* already reported by importJournal */ }
+    if (n === null) { play('error'); toast('This file isn’t a journal backup'); return; }
     play('success');
     if (parsed && Array.isArray(parsed.spots)) {
       app.spots = parsed.spots.filter(s => s && typeof s.name === 'string' && typeof s.lat === 'number' && typeof s.lon === 'number')
@@ -259,7 +259,7 @@ document.addEventListener('change', async e => {
       saveSpots(app.spots);
       app.spots.forEach(measureSpot);
     }
-    toast(n + ' notes importées');
+    toast(n + ' ratings imported');
     render();
   }
 });
@@ -270,8 +270,8 @@ document.addEventListener('submit', e => {
   e.preventDefault();
   const f = e.target, err = $('#spotError');
   const name = f.name.value.trim(), coords = parseCoords(f.coords.value);
-  if (!name) { play('error'); err.textContent = 'Donne un nom à ce spot.'; return; }
-  if (!coords) { play('error'); err.textContent = 'Position attendue sous la forme 48.8566, 2.3522, ou touche « Ma position ».'; return; }
+  if (!name) { play('error'); err.textContent = 'Give this spot a name.'; return; }
+  if (!coords) { play('error'); err.textContent = 'Expected a position like 48.8566, 2.3522, or tap “My location”.'; return; }
   const spot = {
     id: Date.now().toString(36), name, ...coords,
     facing: f.facing.value === '' ? null : +f.facing.value,
@@ -280,7 +280,7 @@ document.addEventListener('submit', e => {
   app.spots = [...app.spots, spot];
   saveSpots(app.spots);
   play('success');
-  toast('Spot ajouté');
+  toast('Spot added');
   render();
   measureSpot(spot);
 });
@@ -289,7 +289,7 @@ document.addEventListener('input', e => {
   if (e.target.id === 'slider') setSkyMinute(+e.target.value);
 });
 
-/* un petit clic toutes les demi-heures quand on fait défiler la journée */
+/* a soft click every half hour while scrubbing through the day */
 function setSkyMinute(min) {
   const before = Math.floor(app.skyMinute() / 30);
   state.skyMin = min;
@@ -297,7 +297,7 @@ function setSkyMinute(min) {
   updateSkyTime(app);
 }
 
-/* glisser sur la courbe du jour et sur celle de l'année */
+/* drag along the day curve and the year curve */
 let drag = null;
 document.addEventListener('pointerdown', e => {
   const svg = e.target.closest('#arcChart, #yearChart');
@@ -318,10 +318,10 @@ function moveDrag(e) {
   setYearPoint(+app.skyDate().slice(0, 4), doy);
 }
 
-/* balayer le haut de « Ce soir » pour changer de jour */
+/* swipe the top of "Tonight" to change day */
 let touch = null;
 document.addEventListener('touchstart', e => {
-  /* le balayage ne démarre jamais sur une commande */
+  /* a swipe never starts on a control */
   touch = e.target.closest('#hero') && !e.target.closest('button, label, input') ? [e.touches[0].clientX, e.touches[0].clientY] : null;
 }, { passive: true });
 document.addEventListener('touchend', e => {
@@ -331,7 +331,7 @@ document.addEventListener('touchend', e => {
   if (Math.abs(dx) > 60 && Math.abs(dy) < 50) shiftDay(dx < 0 ? 1 : -1);
 }, { passive: true });
 
-/* tic-tac */
+/* clock tick */
 let lastDay = localNow().str, lastLive = app.liveDate();
 function tick() {
   const n = localNow(), live = app.liveDate();
@@ -346,7 +346,7 @@ document.addEventListener('visibilitychange', () => {
   if (Date.now() - wx.stamp > WX_TTL) loadWeather(false, render);
 });
 
-/* démarrage */
+/* start */
 armSound();
 document.documentElement.classList.add('intro');
 setTimeout(() => document.documentElement.classList.remove('intro'), 1500);

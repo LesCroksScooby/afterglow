@@ -1,36 +1,38 @@
-# Soleil
+# Afterglow
 
-Une petite appli web installable pour savoir à quelle heure le soleil se lève et se couche, où que tu sois, et si ça vaut le coup de sortir le regarder.
+A small installable web app that tells you when the sun rises and sets, wherever you are, and whether tonight's sky is worth going out for.
 
-## Fonctions
+No account, no cookies, no build step: just static files that work offline once loaded.
 
-- **Ce soir** : heure du coucher ou du lever, score de beauté sur 100, fiabilité de la prévision.
-- **Semaine** : meilleur soir à venir, rappel dans l'agenda, pluies d'étoiles et éclipses de lune.
-- **Ciel** : courbe du jour à faire glisser, boussole, météo heure par heure, lune, courbe de l'année.
-- **Carnet** : tes notes ajustent le score, tes spots indiquent quand partir, réglage du lieu et des sons.
+## Features
 
-Le score regarde les nuages sur la route du soleil (40 à 150 km dans sa direction) et ceux au-dessus de toi. C'est une estimation.
+- **Tonight**: sunset or sunrise time, a beauty score out of 100, and how reliable the forecast is.
+- **Week**: the best evening ahead, a calendar reminder, meteor showers and lunar eclipses.
+- **Sky**: a draggable day curve, a compass you can aim with your phone, hourly weather, the moon and the year's sunrise and sunset curve.
+- **Journal**: your ratings fine-tune the score, your spots tell you when to leave, and you can set the place and sounds.
 
-## Lancer le projet
+The score looks at clouds along the sun's path (40 to 150 km in its direction) and at the clouds above you. It's an estimate.
 
-Aucune installation ni compilation : ce sont des fichiers statiques.
+## Run it locally
+
+Nothing to install or build:
 
 ```bash
 python -m http.server 8000
 ```
 
-Ouvre ensuite http://localhost:8000. Le lieu se choisit dans **Carnet > Réglages**.
+Then open http://localhost:8000 and choose your place in **Journal > Settings**.
 
-## Mise en ligne
+## Deploy
 
-Envoie les fichiers sur un hébergement statique en HTTPS, à la racine du domaine. Le HTTPS est nécessaire pour l'installation, le mode hors ligne, la géolocalisation et la boussole.
+Upload the files to any static host with HTTPS, at the root of the domain. HTTPS is required for installing the app, offline mode, geolocation and the compass.
 
-Avant de publier :
+Before going live:
 
-1. **Mentions légales.** Complète la section « Hébergeur » de `infos.html` avec le nom, l'adresse et le téléphone de ton hébergeur. En France, un particulier peut rester anonyme s'il a donné son identité à l'hébergeur.
-2. **Serveur Apache** (par exemple OVH) : le fichier caché `.htaccess` force le HTTPS, retire le « www », affiche la page 404 et ajoute les en-têtes de sécurité. Sur un autre serveur, reproduis ces réglages.
-3. **Référencement.** Crée un `sitemap.xml` avec l'adresse de tes pages, puis décommente la ligne `Sitemap` de `robots.txt`. Pour une image d'aperçu sur les réseaux sociaux, ajoute dans `index.html` une balise `og:image` avec l'adresse complète d'une image de 1200 × 630 px.
-4. **Services externes.** Si tu en ajoutes un, autorise son adresse dans `connect-src` de la ligne `Content-Security-Policy` du `.htaccess`.
+1. **Legal page.** Fill in the "Publisher" and "Host" sections of `legal.html` as required by the law where you live.
+2. **Apache servers.** The hidden `.htaccess` file forces HTTPS, removes "www", serves the custom 404 page and adds security headers. On another server, set up the same rules.
+3. **Search engines.** Create a `sitemap.xml` listing your pages, then uncomment the `Sitemap` line in `robots.txt`. For a preview image on social networks, add an `og:image` tag to `index.html` with the full URL of a 1200 × 630 px image.
+4. **External services.** If you add one, allow its address in `connect-src` on the `Content-Security-Policy` line of `.htaccess`.
 
 ## Tests
 
@@ -38,23 +40,24 @@ Avant de publier :
 node --test "tests/*.test.js"
 ```
 
-## Mise à jour du mode hors ligne
+## Offline updates
 
-Un fichier modifié arrive à l'ouverture suivante de l'appli. Si tu ajoutes ou renommes un fichier, ajoute-le à `FILES` dans `sw.js` et change `VERSION`.
+A changed file reaches users the next time they open the app. If you add or rename a file, add it to `FILES` in `sw.js` and bump `VERSION`.
 
-## Vie privée
+## Privacy
 
-Il n'y a ni compte, ni cookie, ni statistiques. Le lieu, les notes et les spots restent dans le navigateur. Les coordonnées sont envoyées à [Open-Meteo](https://open-meteo.com/) pour obtenir la météo et le relief, et le nom recherché pour trouver une ville.
+There are no accounts, cookies or analytics. The place, ratings and spots stay in the browser. Coordinates are sent to [Open-Meteo](https://open-meteo.com/) for weather and terrain, and the name you search for to find a city.
 
-## Limites
+## Limitations
 
-- Les prévisions couvrent d'hier à J+9.
-- Le relief a une précision d'environ 90 m et ne compte ni les arbres ni les maisons.
-- Une alerte automatique demanderait un serveur : l'appli propose un rappel dans l'agenda.
+- The interface is in English, with 24-hour times and metric units.
+- Forecasts cover yesterday to 9 days ahead.
+- Terrain data has a resolution of about 90 m and doesn't include trees or buildings.
+- Automatic alerts would need a server; the app offers a calendar reminder instead.
 
-## Crédits et licences
+## Credits and licences
 
-- Code : [MIT](LICENSE)
-- Calculs astronomiques : SunCalc ([licence](SUNCALC-LICENSE.txt))
-- Police Instrument Serif : [SIL OFL](fonts/OFL-LICENSE.txt)
-- Météo, géocodage et relief : [Open-Meteo](https://open-meteo.com/)
+- Code: [MIT](LICENSE)
+- Astronomy: SunCalc ([licence](SUNCALC-LICENSE.txt))
+- Instrument Serif typeface: [SIL OFL](fonts/OFL-LICENSE.txt)
+- Weather, geocoding and terrain: [Open-Meteo](https://open-meteo.com/)

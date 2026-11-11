@@ -1,4 +1,4 @@
-/* Rappel à ajouter à l'agenda du téléphone (fichier .ics avec alarme). */
+/* Reminder to add to the phone’s calendar (.ics file with an alarm). */
 const stamp = ts => new Date(ts).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
 const esc = s => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 
@@ -6,9 +6,9 @@ export function buildIcs({ uid, start, title, description, alarmMinutes = 60, du
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Soleil//FR',
+    'PRODID:-//Afterglow//EN',
     'BEGIN:VEVENT',
-    'UID:' + uid + '@soleil',
+    'UID:' + uid + '@afterglow',
     'DTSTAMP:' + stamp(Date.now()),
     'DTSTART:' + stamp(start),
     'DTEND:' + stamp(start + durationMinutes * 60000),

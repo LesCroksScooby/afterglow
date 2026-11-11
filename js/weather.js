@@ -1,11 +1,11 @@
-/* Prévisions Open-Meteo : météo sur place et nuages sur la route du soleil. */
+/* Open-Meteo forecasts: local weather and clouds on the sun’s path. */
 import { HOME, TZ, WX_TTL, FETCH_TIMEOUT } from './config.js';
 import { sunDay } from './astro.js';
 import { destination } from './horizon.js';
 import { addDays, dateStr, pad, localNow, localParts } from './time.js';
 import { store } from './store.js';
 
-const KEY = 'soleil-wx-v2';
+const KEY = 'afterglow-wx-v2';
 const BASE = 'https://api.open-meteo.com/v1/forecast?';
 const COMMON = '&timezone=' + encodeURIComponent(TZ) + '&past_days=1&forecast_days=10';
 const PATH_KM = [40, 90, 150];
@@ -15,7 +15,7 @@ const homeUrl = () => BASE + 'latitude=' + HOME.lat + '&longitude=' + HOME.lon +
   '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,uv_index_max,sunshine_duration' +
   '&wind_speed_unit=kmh' + COMMON;
 
-/* Trois points vers le lever puis trois vers le coucher. L'azimut change peu en 10 jours : on prend celui de J+3. */
+/* Three points towards sunrise, then three towards sunset. The azimuth barely changes over 10 days: the one for day +3 is used. */
 function pathUrl() {
   const S = sunDay(addDays(localNow().str, 3));
   const pts = [S.riseAz, S.setAz].flatMap(az => PATH_KM.map(km => destination(HOME.lat, HOME.lon, az ?? 180, km)));
@@ -91,7 +91,7 @@ async function getJson(url) {
   } finally { clearTimeout(timer); }
 }
 
-/* Affiche tout de suite ce qui est en mémoire, puis actualise. onChange est appelé à chaque nouvel état. */
+/* Shows saved data immediately, then refreshes. onChange is called on every new state. */
 export async function loadWeather(force, onChange) {
   const cached = store.get(KEY, null);
   const hasCache = cached && cached.home;
@@ -112,20 +112,20 @@ export async function loadWeather(force, onChange) {
   onChange();
 }
 
-/* Couples symbole / libellé des codes météo */
+/* Symbol / label pairs for weather codes */
 const WMO = {
-  0: ['sun', 'Ciel dégagé'], 1: ['sun', 'Plutôt dégagé'], 2: ['partly', 'Partiellement nuageux'], 3: ['cloud', 'Couvert'],
-  45: ['fog', 'Brouillard'], 48: ['fog', 'Brouillard givrant'],
-  51: ['rain', 'Bruine légère'], 53: ['rain', 'Bruine'], 55: ['rain', 'Bruine dense'],
-  56: ['rain', 'Bruine verglaçante'], 57: ['rain', 'Bruine verglaçante'],
-  61: ['rain', 'Pluie faible'], 63: ['rain', 'Pluie'], 65: ['rain', 'Pluie forte'],
-  66: ['rain', 'Pluie verglaçante'], 67: ['rain', 'Pluie verglaçante'],
-  71: ['snow', 'Neige faible'], 73: ['snow', 'Neige'], 75: ['snow', 'Neige forte'], 77: ['snow', 'Grains de neige'],
-  80: ['rain', 'Averses'], 81: ['rain', 'Averses'], 82: ['storm', 'Fortes averses'],
-  85: ['snow', 'Averses de neige'], 86: ['snow', 'Fortes averses de neige'],
-  95: ['storm', 'Orage'], 96: ['storm', 'Orage et grêle'], 99: ['storm', 'Orage et forte grêle']
+  0: ['sun', 'Clear sky'], 1: ['sun', 'Mostly clear'], 2: ['partly', 'Partly cloudy'], 3: ['cloud', 'Overcast'],
+  45: ['fog', 'Fog'], 48: ['fog', 'Freezing fog'],
+  51: ['rain', 'Light drizzle'], 53: ['rain', 'Drizzle'], 55: ['rain', 'Dense drizzle'],
+  56: ['rain', 'Freezing drizzle'], 57: ['rain', 'Freezing drizzle'],
+  61: ['rain', 'Light rain'], 63: ['rain', 'Rain'], 65: ['rain', 'Heavy rain'],
+  66: ['rain', 'Freezing rain'], 67: ['rain', 'Freezing rain'],
+  71: ['snow', 'Light snow'], 73: ['snow', 'Snow'], 75: ['snow', 'Heavy snow'], 77: ['snow', 'Snow grains'],
+  80: ['rain', 'Showers'], 81: ['rain', 'Showers'], 82: ['storm', 'Heavy showers'],
+  85: ['snow', 'Snow showers'], 86: ['snow', 'Heavy snow showers'],
+  95: ['storm', 'Thunderstorm'], 96: ['storm', 'Thunderstorm with hail'], 99: ['storm', 'Thunderstorm with heavy hail']
 };
 export const wmo = (c, night) => {
-  const w = WMO[c] || ['cloud', 'Indéterminé'];
+  const w = WMO[c] || ['cloud', 'Unknown'];
   return [night && (c === 0 || c === 1) ? 'moon' : w[0], w[1]];
 };

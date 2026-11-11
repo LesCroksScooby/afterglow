@@ -1,8 +1,8 @@
-/* Sons de l'interface, entièrement synthétisés : aucun fichier à charger, disponibles hors ligne.
-   Chaque son est une liste de couches. n : souffle filtré (craie), t : note. */
+/* Interface sounds, fully synthesised: no files to load, available offline.
+   Each sound is a list of layers. n: filtered noise (chalk), t: tone. */
 import { store } from './store.js';
 
-const KEY = 'soleil-sons-v1';
+const KEY = 'afterglow-sounds-v1';
 const STAR = [392, 440, 523.25, 587.33, 659.25];
 
 const bell = (freq, at = 0, gain = .15, dur = .42) => [
@@ -44,7 +44,7 @@ function noiseFor(ac) {
   return buf;
 }
 
-/* Écrit un son dans un contexte audio. Séparé de play() pour pouvoir le contrôler hors temps réel. */
+/* Schedules a sound in an audio context. Kept apart from play() so it can be checked offline. */
 export function schedule(ac, dest, name, when = ac.currentTime, level = 1) {
   for (const l of SOUNDS[name] || []) {
     const start = when + (l.at || 0), end = start + l.dur;
@@ -92,13 +92,13 @@ export function play(name, delay = 0) {
   try {
     const ac = context();
     if (ac) schedule(ac, master, name, ac.currentTime + .005 + delay);
-  } catch (e) { /* un son raté ne doit jamais bloquer l'appli */ }
+  } catch (e) { /* a failed sound must never block the app */ }
 }
 
-/* Les navigateurs n'autorisent le son qu'après un geste : on prépare l'audio au premier appui. */
+/* Browsers only allow sound after a gesture: audio is prepared on the first tap. */
 export function armSound() {
   const unlock = () => {
-    if (enabled) { try { context(); } catch (e) { /* rien */ } }
+    if (enabled) { try { context(); } catch (e) { /* nothing to do */ } }
     ['pointerdown', 'touchend', 'keydown'].forEach(n => document.removeEventListener(n, unlock));
   };
   ['pointerdown', 'touchend', 'keydown'].forEach(n => document.addEventListener(n, unlock, { passive: true }));

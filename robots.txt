@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# Une fois le site en ligne, ajoute son sitemap :
-# Sitemap: https://ton-domaine.fr/sitemap.xml
+# Once the site is online, add its sitemap:
+# Sitemap: https://your-domain.example/sitemap.xml

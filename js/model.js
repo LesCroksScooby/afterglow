@@ -1,4 +1,4 @@
-/* Rassemble soleil, météo, score, relief et carnet pour un lever ou un coucher donné. */
+/* Brings together sun, weather, score, terrain and journal for a given sunrise or sunset. */
 import { HOME } from './config.js';
 import { position, sunDay, timesAt } from './astro.js';
 import { hourData, pathData } from './weather.js';
@@ -27,7 +27,7 @@ export function eventInfo(str, kind) {
   return info;
 }
 
-/* Ce que donne chaque spot pour ce jour-là, du mieux placé au moins bien placé */
+/* How each spot fares that day, best placed first */
 export function spotsFor(spots, str, kind) {
   return spots.map(s => {
     const T = timesAt(str, s.lat, s.lon);

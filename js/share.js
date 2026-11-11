@@ -1,9 +1,9 @@
-/* Partage d'une image du soir et envoi de fichiers vers le téléphone. */
+/* Sharing an image of the evening, and sending files to the phone. */
 import { BANDS, palette, ridgePoints, seedOf, treelinePoints } from './ui/scene.js';
 import { HOME } from './config.js';
-import { cap, hm, longDate } from './time.js';
+import { hm, longDate } from './time.js';
 
-/* Renvoie 'shared', 'saved' ou 'cancelled' */
+/* Returns 'shared', 'saved' or 'cancelled' */
 export async function deliverFile(blob, name, title) {
   const file = new File([blob], name, { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -58,12 +58,12 @@ export async function eveningImage(E) {
   c.font = '300px "Instrument Serif", Georgia, serif';
   c.fillText(hm(E.time), 72, 390);
   c.font = '64px "Instrument Serif", Georgia, serif';
-  c.fillText((E.kind === 'set' ? 'Coucher' : 'Lever') + ' du soleil', 80, 112 + 30);
+  c.fillText(E.kind === 'set' ? 'Sunset' : 'Sunrise', 80, 112 + 30);
   c.font = '44px system-ui, sans-serif';
   c.fillText(HOME.name, 80, H - 112);
   c.font = '36px system-ui, sans-serif';
   c.fillStyle = '#c6ccd7';
-  c.fillText(cap(longDate(E.S.ref)), 80, H - 60);
+  c.fillText(longDate(E.S.ref), 80, H - 60);
   if (E.scored) {
     c.fillStyle = '#f0ebdf';
     c.textAlign = 'right';

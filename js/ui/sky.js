@@ -1,4 +1,4 @@
-/* Onglet « Ciel » : courbe du jour, boussole, phases, météo à l'heure choisie, lune, année. */
+/* "Sky" tab: day curve, compass, light phases, weather at the chosen hour, moon, year. */
 import { dayCurve, moonIllum, moonName, moonPos, moonTimes, nextPhase, phaseName, position, sunDay } from '../astro.js';
 import { dayData, hourData, wmo, wx } from '../weather.js';
 import { addDays, cap, clamp, clock, dayMonth, dirName, dur, hm, isD, minOfDay, num, pad, parse, localTs } from '../time.js';
@@ -17,7 +17,7 @@ function arcSvg(S) {
     '<clipPath id="cpDn"><rect y="' + y0 + '" width="' + A.W + '" height="' + (A.bot - y0) + '"/></clipPath></defs>';
   [0, 6, 12, 18, 24].forEach(h => {
     g += '<line class="a-grid" x1="' + X(h * 60) + '" x2="' + X(h * 60) + '" y1="' + A.top + '" y2="' + A.bot + '"/>' +
-      '<text class="a-t" x="' + X(h * 60) + '" y="' + (A.H - 6) + '" text-anchor="' + (h === 0 ? 'start' : h === 24 ? 'end' : 'middle') + '">' + pad(h) + ' h</text>';
+      '<text class="a-t" x="' + X(h * 60) + '" y="' + (A.H - 6) + '" text-anchor="' + (h === 0 ? 'start' : h === 24 ? 'end' : 'middle') + '">' + pad(h) + ':00</text>';
   });
   g += '<line class="a-hz" x1="' + A.x0 + '" x2="' + A.x1 + '" y1="' + y0 + '" y2="' + y0 + '"/>' +
     '<path class="a-dn" d="' + d + '" clip-path="url(#cpDn)"/><path class="a-up" d="' + d + '" clip-path="url(#cpUp)"/>';
@@ -26,7 +26,7 @@ function arcSvg(S) {
     g += '<text class="a-l" x="' + (X(minOfDay(t)) + dx).toFixed(1) + '" y="' + (y0 - 6) + '" text-anchor="' + anchor + '">' + hm(t) + '</text>';
   });
   g += '<g id="arcNow"><line id="arcDrop" class="a-drop" y2="' + A.bot + '"/><circle id="arcSun" r="8" stroke-width="2"/></g>';
-  return '<svg id="arcChart" class="arc" viewBox="0 0 ' + A.W + ' ' + A.H + '" role="img" aria-label="Hauteur du soleil au cours de la journée">' + g + '</svg>';
+  return '<svg id="arcChart" class="arc" viewBox="0 0 ' + A.W + ' ' + A.H + '" role="img" aria-label="Height of the sun through the day">' + g + '</svg>';
 }
 
 function compassSvg(S) {
@@ -37,12 +37,13 @@ function compassSvg(S) {
     const big = a % 30 === 0, p1 = P(R, a), p2 = P(R - (big ? 9 : 4), a);
     g += '<line class="c-t' + (big ? ' b' : '') + '" x1="' + p1[0] + '" y1="' + p1[1] + '" x2="' + p2[0] + '" y2="' + p2[1] + '"/>';
   }
-  [['N', 0], ['E', 90], ['S', 180], ['O', 270]].forEach(c => {
+  [['N', 0], ['E', 90], ['S', 180], ['W', 270]].forEach(c => {
     const p = P(64, c[1]);
     g += '<text class="c-d" x="' + p[0] + '" y="' + p[1] + '" text-anchor="middle" dominant-baseline="central">' + c[0] + '</text>';
   });
   const yr = S.str.slice(0, 4), win = sunDay(yr + '-12-21'), sum = sunDay(yr + '-06-21');
   const band = (a, b, cls) => {
+    if (a == null || b == null) return '';
     const lo = Math.min(a, b), hi = Math.max(a, b), p1 = P(R + 6, lo), p2 = P(R + 6, hi);
     return '<path class="' + cls + '" d="M' + p1[0] + ' ' + p1[1] + 'A' + (R + 6) + ' ' + (R + 6) + ' 0 0 1 ' + p2[0] + ' ' + p2[1] + '"/>';
   };
@@ -51,7 +52,7 @@ function compassSvg(S) {
   if (S.riseAz != null) g += ray(S.riseAz, 'c-rr');
   if (S.setAz != null) g += ray(S.setAz, 'c-rs');
   g += '<circle id="compSun" r="8" stroke-width="2"/><circle class="c-c" r="3"/>';
-  return '<svg class="compass" viewBox="-108 -108 216 216" role="img" aria-label="Directions du lever et du coucher"><g id="dial">' + g + '</g><path class="c-up" d="M0 -106 L-6 -96 L6 -96 Z"/></svg>';
+  return '<svg class="compass" viewBox="-108 -108 216 216" role="img" aria-label="Sunrise and sunset directions"><g id="dial">' + g + '</g><path class="c-up" d="M0 -106 L-6 -96 L6 -96 Z"/></svg>';
 }
 
 function moonSvg(phase) {
@@ -66,11 +67,11 @@ function moonSvg(phase) {
 function phasesHtml(S) {
   const T = S.T;
   const rows = [
-    ['nightEnd', 'Aube astronomique'], ['nauticalDawn', 'Aube nautique'], ['blueAMStart', 'Début de l’heure bleue'],
-    ['dawn', 'Aube civile'], ['blueAMEnd', 'Fin de l’heure bleue'], ['sunrise', 'Lever du soleil'],
-    ['goldenHourEnd', 'Fin de l’heure dorée'], ['solarNoon', 'Midi solaire'], ['goldenHour', 'Début de l’heure dorée'],
-    ['sunset', 'Coucher du soleil'], ['blueEveStart', 'Début de l’heure bleue'], ['dusk', 'Crépuscule civil'],
-    ['blueEveEnd', 'Fin de l’heure bleue'], ['nauticalDusk', 'Crépuscule nautique'], ['night', 'Nuit noire']
+    ['nightEnd', 'Astronomical dawn'], ['nauticalDawn', 'Nautical dawn'], ['blueAMStart', 'Blue hour starts'],
+    ['dawn', 'Civil dawn'], ['blueAMEnd', 'Blue hour ends'], ['sunrise', 'Sunrise'],
+    ['goldenHourEnd', 'Golden hour ends'], ['solarNoon', 'Solar noon'], ['goldenHour', 'Golden hour starts'],
+    ['sunset', 'Sunset'], ['blueEveStart', 'Blue hour starts'], ['dusk', 'Civil dusk'],
+    ['blueEveEnd', 'Blue hour ends'], ['nauticalDusk', 'Nautical dusk'], ['night', 'Full darkness']
   ].filter(r => isD(T[r[0]])).sort((a, b) => T[a[0]] - T[b[0]]);
   const hl = { sunrise: 1, sunset: 1 };
   const next = sunDay(addDays(S.str, 1));
@@ -78,12 +79,12 @@ function phasesHtml(S) {
   const prev = sunDay(addDays(S.str, -1));
   const diff = Math.round((S.dayLen - prev.dayLen) * 60), ad = Math.abs(diff);
   const shadow = S.noonAlt > 0 ? 1 / Math.tan(S.noonAlt * rad) : null;
-  return '<section class="block"><h2>La journée</h2><dl class="rows">' +
-    row('Durée du jour', dur(S.dayLen), (diff >= 0 ? '+' : '−') + Math.floor(ad / 60) + ' min ' + pad(ad % 60) + ' s sur hier') +
-    row('Hauteur à midi', num(S.noonAlt, 1) + ' °', 'à ' + hm(T.solarNoon)) +
-    row('Ombre à midi', shadow ? num(shadow, 2) + ' m' : '—', 'pour 1 m de haut') +
-    row('Nuit noire', nightMin != null ? dur(nightMin) : 'Aucune') +
-    '</dl><details class="more"><summary>Toutes les phases de lumière</summary><ul class="phases">' +
+  return '<section class="block"><h2>The day</h2><dl class="rows">' +
+    row('Day length', dur(S.dayLen), (diff >= 0 ? '+' : '−') + Math.floor(ad / 60) + ' min ' + pad(ad % 60) + ' s vs yesterday') +
+    row('Height at noon', num(S.noonAlt, 1) + ' °', 'at ' + hm(T.solarNoon)) +
+    row('Shadow at noon', shadow ? num(shadow, 2) + ' m' : '—', 'for an object 1 m tall') +
+    row('Full darkness', nightMin != null ? dur(nightMin) : 'None') +
+    '</dl><details class="more"><summary>All light phases</summary><ul class="phases">' +
     rows.map(r => '<li' + (hl[r[0]] ? ' class="hl"' : '') + '><b>' + hm(T[r[0]]) + '</b><span>' + r[1] + '</span></li>').join('') +
     '</ul></details></section>';
 }
@@ -92,18 +93,18 @@ function moonHtml(S) {
   const mi = moonIllum(S.ref), mp = moonPos(S.ref), mt = moonTimes(S);
   const full = nextPhase(S.ref.getTime(), .5), nw = nextPhase(S.ref.getTime(), 0);
   const ill = mi.fraction;
-  const sky = ill < .1 ? 'Nuit très sombre, idéale pour la Voie lactée.' : ill < .4 ? 'Nuit plutôt sombre, bon ciel étoilé.' :
-    ill < .8 ? 'Lune bien présente, ciel moins noir.' : 'Lune très lumineuse, peu d’étoiles visibles.';
+  const sky = ill < .1 ? 'Very dark night, ideal for the Milky Way.' : ill < .4 ? 'Fairly dark night, good for stars.' :
+    ill < .8 ? 'The Moon is bright, the sky is less dark.' : 'Very bright Moon, few stars visible.';
   const dd = d => isD(d) ? dayMonth(d) : '—';
-  return '<section class="block"><h2>Lune</h2><div class="moon-head">' + moonSvg(mi.phase) +
-    '<div><b>' + moonName(mi.phase) + '</b><small>Éclairée à ' + num(ill * 100) + ' %. ' + sky + '</small></div></div><dl class="rows">' +
-    row('Lever', hm(mt.rise), mt.rise ? '' : (mt.alwaysUp ? 'toujours levée' : 'pas de lever ce jour')) +
-    row('Coucher', hm(mt.set), mt.set ? '' : 'pas de coucher ce jour') +
-    row('Pleine lune', dd(full)) + row('Nouvelle lune', dd(nw)) +
+  return '<section class="block"><h2>Moon</h2><div class="moon-head">' + moonSvg(mi.phase) +
+    '<div><b>' + moonName(mi.phase) + '</b><small>' + num(ill * 100) + '% lit. ' + sky + '</small></div></div><dl class="rows">' +
+    row('Moonrise', hm(mt.rise), mt.rise ? '' : (mt.alwaysUp ? 'up all day' : 'no moonrise that day')) +
+    row('Moonset', hm(mt.set), mt.set ? '' : 'no moonset that day') +
+    row('Full moon', dd(full)) + row('New moon', dd(nw)) +
     row('Distance', num(mp.distance) + ' km') + '</dl></section>';
 }
 
-/* Courbe de l'année : mise en cache car 183 jours sont calculés */
+/* Year curve: cached, because 183 days are computed */
 const years = new Map();
 function yearData(y) {
   if (years.has(y)) return years.get(y);
@@ -126,16 +127,16 @@ function yearSvg(y) {
   let g = '';
   [0, 6, 12, 18, 24].forEach(h => {
     g += '<line class="a-grid" x1="' + Y1.x0 + '" x2="' + Y1.x1 + '" y1="' + yY(h * 60) + '" y2="' + yY(h * 60) + '"/>' +
-      '<text class="a-t" x="' + (Y1.x0 - 5) + '" y="' + (yY(h * 60) + 3.5) + '" text-anchor="end">' + h + ' h</text>';
+      '<text class="a-t" x="' + (Y1.x0 - 5) + '" y="' + (yY(h * 60) + 3.5) + '" text-anchor="end">' + pad(h) + ':00</text>';
   });
   'JFMAMJJASOND'.split('').forEach((m, i) => {
     g += '<text class="a-t" x="' + yX(i * 30.42 + 15).toFixed(1) + '" y="' + (Y1.H - 8) + '" text-anchor="middle">' + m + '</text>';
   });
   g += '<path class="y-band" d="' + band + '"/><path class="y-set" d="' + line('set') + '"/><path class="y-rise" d="' + line('rise') + '"/>';
-  g += '<text class="y-lab" x="' + yX(150) + '" y="' + (yY(data[75].set) - 12) + '" text-anchor="middle">Coucher</text>';
-  g += '<text class="y-lab" x="' + yX(150) + '" y="' + (yY(data[75].rise) + 20) + '" text-anchor="middle">Lever</text>';
+  g += '<text class="y-lab" x="' + yX(150) + '" y="' + (yY(data[75].set) - 12) + '" text-anchor="middle">Sunset</text>';
+  g += '<text class="y-lab" x="' + yX(150) + '" y="' + (yY(data[75].rise) + 20) + '" text-anchor="middle">Sunrise</text>';
   g += '<g id="yNow"><line id="yLine" class="y-now" y1="' + Y1.top + '" y2="' + Y1.bot + '"/><circle id="yS" class="y-dot" r="4.5"/><circle id="yR" class="y-dot" r="4.5"/></g>';
-  return '<svg id="yearChart" class="year" viewBox="0 0 ' + Y1.W + ' ' + Y1.H + '" role="img" aria-label="Heures de lever et de coucher sur l’année">' + g + '</svg>';
+  return '<svg id="yearChart" class="year" viewBox="0 0 ' + Y1.W + ' ' + Y1.H + '" role="img" aria-label="Sunrise and sunset times over the year">' + g + '</svg>';
 }
 
 export function setYearPoint(y, doy) {
@@ -144,7 +145,7 @@ export function setYearPoint(y, doy) {
   $('#yLine').setAttribute('x1', x); $('#yLine').setAttribute('x2', x);
   $('#yS').setAttribute('cx', x); $('#yS').setAttribute('cy', yY(p.set).toFixed(1));
   $('#yR').setAttribute('cx', x); $('#yR').setAttribute('cy', yY(p.rise).toFixed(1));
-  $('#yRead').textContent = cap(dayMonth(p.ref)) + ' : lever ' + hm(p.T.sunrise) + ', coucher ' + hm(p.T.sunset);
+  $('#yRead').textContent = cap(dayMonth(p.ref)) + ': sunrise ' + hm(p.T.sunrise) + ', sunset ' + hm(p.T.sunset);
 }
 export const yearPointFromX = (svg, clientX) => {
   const b = svg.getBoundingClientRect();
@@ -160,37 +161,37 @@ export const minuteFromX = (svg, clientX) => {
 function weatherHtml(S, ts, alt, label) {
   let body;
   const w = wx.data ? hourData(ts) : null;
-  if (!wx.data) body = '<p class="muted">' + (wx.status === 'loading' ? 'Chargement de la météo…' : 'Météo indisponible : vérifie la connexion. Les calculs du soleil fonctionnent toujours.') + '</p>';
-  else if (!w) body = '<p class="muted">Pas de météo pour cette date : les prévisions couvrent hier et les 9 prochains jours.</p>';
+  if (!wx.data) body = '<p class="muted">' + (wx.status === 'loading' ? 'Loading the weather…' : 'Weather unavailable: check your connection. Sun times still work.') + '</p>';
+  else if (!w) body = '<p class="muted">No weather for this date: forecasts cover yesterday and the next 9 days.</p>';
   else {
     const D = dayData(S.str), ic = wmo(w.code, alt < -.833);
-    const lay = (l, v) => '<div class="lay"><span>' + l + '</span><i><u style="width:' + clamp(v ?? 0, 0, 100) + '%"></u></i><em>' + num(v) + ' %</em></div>';
+    const lay = (l, v) => '<div class="lay"><span>' + l + '</span><i><u style="width:' + clamp(v ?? 0, 0, 100) + '%"></u></i><em>' + num(v) + '%</em></div>';
     body = '<p class="wx-line big">' + icon(ic[0]) + ic[1] + '</p><dl class="rows">' +
-      row('Température', num(w.temp, 1) + ' °', D ? 'de ' + num(D.tmin) + ' à ' + num(D.tmax) + ' ° sur la journée' : '') +
-      row('Pluie', num(w.pp) + ' %', num(w.precip, 1) + ' mm/h') +
-      row('Vent', num(w.wind) + ' km/h', (w.dir != null ? 'de ' + dirName(w.dir) + ', ' : '') + 'rafales ' + num(w.gust)) +
-      row('Visibilité', w.vis != null ? num(w.vis / 1000, 1) + ' km' : '—') +
-      row('Humidité', num(w.hum) + ' %') + row('Pression', num(w.pres) + ' hPa') +
-      (D ? row('UV maximum', num(D.uv, 1)) + row('Ensoleillement', D.sun != null ? num(D.sun / 3600, 1) + ' h' : '—') : '') +
-      '</dl><div class="layers">' + lay('Total', w.total) + lay('Hauts', w.high) + lay('Moyens', w.mid) + lay('Bas', w.low) + '</div>' +
-      (wx.status === 'offline' ? '<p class="muted small">Hors ligne : météo enregistrée à ' + hm(new Date(wx.stamp)) + '.</p>' : '');
+      row('Temperature', num(w.temp, 1) + ' °', D ? num(D.tmin) + ' to ' + num(D.tmax) + ' ° over the day' : '') +
+      row('Rain', num(w.pp) + '%', num(w.precip, 1) + ' mm/h') +
+      row('Wind', num(w.wind) + ' km/h', (w.dir != null ? 'from ' + dirName(w.dir) + ', ' : '') + 'gusts ' + num(w.gust)) +
+      row('Visibility', w.vis != null ? num(w.vis / 1000, 1) + ' km' : '—') +
+      row('Humidity', num(w.hum) + '%') + row('Pressure', num(w.pres) + ' hPa') +
+      (D ? row('Max UV index', num(D.uv, 1)) + row('Sunshine', D.sun != null ? num(D.sun / 3600, 1) + ' h' : '—') : '') +
+      '</dl><div class="layers">' + lay('Total', w.total) + lay('High', w.high) + lay('Mid', w.mid) + lay('Low', w.low) + '</div>' +
+      (wx.status === 'offline' ? '<p class="muted small">Offline: weather saved at ' + hm(new Date(wx.stamp)) + '.</p>' : '');
   }
-  return '<h2>Météo à ' + label + '</h2>' + body;
+  return '<h2>Weather at ' + label + '</h2>' + body;
 }
 
 export function renderSky(el, app) {
   const str = app.skyDate(), S = sunDay(str), y = +str.slice(0, 4);
   el.innerHTML = '<div class="page page-top">' +
     '<section class="readout"><h1 id="skyTime">—</h1><p id="skyStatus"></p>' +
-      '<button type="button" class="link" id="skyNow" data-act="skynow">Maintenant</button></section>' +
+      '<button type="button" class="link" id="skyNow" data-act="skynow">Now</button></section>' +
     '<div class="arc-wrap">' + arcSvg(S) + '</div>' +
-    '<input type="range" id="slider" min="0" max="1439" step="5" aria-label="Heure de la journée">' +
-    '<section class="block compass-block"><h2>Direction du soleil</h2>' + compassSvg(S) +
-      '<p class="muted center" id="aimHint">Rouge : coucher, or : lever. Les arcs montrent l’amplitude sur l’année.</p>' +
-      '<button type="button" class="btn" id="aimBtn" data-act="aim">' + icon('aim') + 'Viser avec le téléphone</button></section>' +
+    '<input type="range" id="slider" min="0" max="1439" step="5" aria-label="Time of day">' +
+    '<section class="block compass-block"><h2>Sun direction</h2>' + compassSvg(S) +
+      '<p class="muted center" id="aimHint">Red: sunset, gold: sunrise. The arcs show how far they move over the year.</p>' +
+      '<button type="button" class="btn" id="aimBtn" data-act="aim">' + icon('aim') + 'Aim with your phone</button></section>' +
     '<section class="block" id="skyWx"></section>' +
     phasesHtml(S) + moonHtml(S) +
-    '<section class="block"><h2>L’année ' + y + '</h2><div class="year-wrap">' + yearSvg(y) + '</div><p class="muted small" id="yRead"></p></section>' +
+    '<section class="block"><h2>The year ' + y + '</h2><div class="year-wrap">' + yearSvg(y) + '</div><p class="muted small" id="yRead"></p></section>' +
     '</div>';
   const jan1 = Date.UTC(y, 0, 1), [yy, mm, dd] = parse(str);
   setYearPoint(y, (Date.UTC(yy, mm - 1, dd) - jan1) / 864e5);
@@ -205,7 +206,7 @@ export function updateSkyTime(app) {
   const ts = localTs(y, m, d, Math.floor(min / 60), min % 60);
   const pos = position(new Date(ts)), alt = pos.altitude, up = alt > -.833;
   const morning = isD(S.T.solarNoon) ? ts < S.T.solarNoon : min < 720;
-  const cx = X(min).toFixed(1), cy = Math.min(Y(alt), A.bot - 8).toFixed(1);   // en pleine nuit le point reste sur le graphique
+  const cx = X(min).toFixed(1), cy = Math.min(Y(alt), A.bot - 8).toFixed(1);   // at night the dot stays on the chart
 
   const sun = $('#arcSun');
   sun.setAttribute('cx', cx); sun.setAttribute('cy', cy); sun.setAttribute('class', up ? 's-up' : 's-dn');
@@ -213,7 +214,7 @@ export function updateSkyTime(app) {
   drop.setAttribute('x1', cx); drop.setAttribute('x2', cx); drop.setAttribute('y1', cy);
   $('#slider').value = min;
   $('#skyTime').textContent = clock(min);
-  $('#skyStatus').textContent = phaseName(alt, morning) + '. Soleil ' + (up ? 'à ' + num(alt, 1) + ' ° au-dessus de' : 'à ' + num(-alt, 1) + ' ° sous') + ' l’horizon, plein ' + dirName(pos.azimuth) + '.';
+  $('#skyStatus').textContent = phaseName(alt, morning) + '. Sun ' + num(Math.abs(alt), 1) + ' ° ' + (up ? 'above' : 'below') + ' the horizon, due ' + dirName(pos.azimuth) + '.';
   $('#skyNow').hidden = app.state.skyMin === null && app.state.date === null;
 
   const b = pos.azimuth * rad, cs = $('#compSun');
@@ -226,7 +227,7 @@ export function updateSkyTime(app) {
     $('#skyWx').innerHTML = weatherHtml(S, ts, alt, clock(min));
   } else {
     const h2 = $('#skyWx h2');
-    if (h2) h2.textContent = 'Météo à ' + clock(min);
+    if (h2) h2.textContent = 'Weather at ' + clock(min);
   }
 }
 
@@ -237,7 +238,7 @@ export function setHeading(app, heading) {
   const S = sunDay(app.skyDate());
   const target = S.setAz;
   const gap = ((target - heading + 540) % 360) - 180, a = Math.abs(Math.round(gap));
-  $('#aimHint').textContent = a <= 4 ? 'Tu regardes pile vers le coucher.' : 'Coucher à ' + a + ' ° sur ta ' + (gap < 0 ? 'gauche' : 'droite') + '.';
+  $('#aimHint').textContent = a <= 4 ? 'You’re facing the sunset.' : 'Sunset is ' + a + ' ° to your ' + (gap < 0 ? 'left' : 'right') + '.';
   return a;
 }
 export function resetHeading() {

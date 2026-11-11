@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Soleil</title>
-<meta name="description" content="Heure du coucher et du lever du soleil où que tu sois, avec une prévision de la beauté du ciel, la météo, la lune et une boussole.">
+<title>Afterglow: sunset time and sky forecast</title>
+<meta name="description" content="Sunset and sunrise times wherever you are, with a forecast of how beautiful the sky will be, the weather, the moon and a compass.">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Soleil">
-<meta property="og:locale" content="fr_FR">
-<meta property="og:title" content="Soleil : coucher de soleil et prévision du ciel">
-<meta property="og:description" content="L’heure du coucher, et si ça vaut le coup de sortir le regarder ce soir.">
+<meta property="og:site_name" content="Afterglow">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Afterglow: sunset time and sky forecast">
+<meta property="og:description" content="When the sun sets, and whether it’s worth going out to watch it tonight.">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#20294f">
 <link rel="manifest" href="manifest.webmanifest">
@@ -19,12 +19,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Soleil">
+<meta name="apple-mobile-web-app-title" content="Afterglow">
 <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<noscript><p class="noscript">Cette appli a besoin de JavaScript pour calculer les heures du soleil. <a href="infos.html">Mentions légales et confidentialité</a></p></noscript>
+<noscript><p class="noscript">This app needs JavaScript to calculate the sun times. <a href="legal.html">Legal notice and privacy</a></p></noscript>
 <main id="view">
   <div id="tab-today" class="panel"></div>
   <div id="tab-week" class="panel" hidden></div>
@@ -33,10 +33,10 @@
 </main>
 
 <nav class="tabs" aria-label="Navigation">
-  <button type="button" data-tab="today"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 8V4M4.5 10.5 6 12M19.5 10.5 18 12M9 21h6"/></svg>Ce soir</button>
-  <button type="button" data-tab="week"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M8 14h2M14 14h2"/></svg>Semaine</button>
-  <button type="button" data-tab="sky"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Ciel</button>
-  <button type="button" data-tab="book"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h13v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM4 17a2 2 0 0 1 2-2h13M9 8h6"/></svg>Carnet</button>
+  <button type="button" data-tab="today"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 8V4M4.5 10.5 6 12M19.5 10.5 18 12M9 21h6"/></svg>Tonight</button>
+  <button type="button" data-tab="week"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M8 14h2M14 14h2"/></svg>Week</button>
+  <button type="button" data-tab="sky"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Sky</button>
+  <button type="button" data-tab="book"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h13v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM4 17a2 2 0 0 1 2-2h13M9 8h6"/></svg>Journal</button>
 </nav>
 <div id="toast" role="status" aria-live="polite"></div>
 

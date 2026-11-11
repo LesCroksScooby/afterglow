@@ -1,4 +1,4 @@
-/* Boussole en direct, à partir de l'orientation du téléphone. */
+/* Live compass, from the phone’s orientation. */
 let listener = null, eventName = null, smooth = null;
 
 export const compassSupported = () => 'DeviceOrientationEvent' in window;
@@ -18,7 +18,7 @@ export async function startCompass(onHeading) {
     if (typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
     else if (e.absolute && typeof e.alpha === 'number') h = (360 - e.alpha) % 360;
     if (h == null) return;
-    /* lissage en passant par le chemin angulaire le plus court */
+    /* smoothing along the shortest angular path */
     smooth = smooth == null ? h : (smooth + (((h - smooth + 540) % 360) - 180) * .18 + 360) % 360;
     onHeading(smooth);
   };

@@ -1,5 +1,5 @@
-/* Vrai horizon : profil du relief autour d'un point (données d'altitude Open-Meteo, ~90 m).
-   Les arbres et les maisons ne sont pas dans ces données. */
+/* Real horizon: terrain profile around a point (Open-Meteo elevation data, ~90 m).
+   Trees and buildings are not in this data. */
 import { store } from './store.js';
 
 const AZS = [];
@@ -7,7 +7,7 @@ for (let a = 45; a <= 135; a += 5) AZS.push(a);
 for (let a = 225; a <= 315; a += 5) AZS.push(a);
 const DIST = [.3, .6, 1, 1.5, 2.5, 4, 6, 9, 14, 20];   // km
 const EARTH = 6371;
-const KEY = 'soleil-horizon-v1';
+const KEY = 'afterglow-horizon-v1';
 const CHUNK = 100;
 
 export function destination(lat, lon, az, km) {
@@ -15,7 +15,7 @@ export function destination(lat, lon, az, km) {
   return [lat + km * Math.cos(r) / 111.2, lon + km * Math.sin(r) / (111.2 * Math.cos(lat * Math.PI / 180))];
 }
 
-/* angle du relief au-dessus de l'horizontale, courbure terrestre et réfraction comprises */
+/* terrain angle above the horizontal, including Earth curvature and refraction */
 export function elevationAngle(dh, km) {
   const drop = km * km / (2 * EARTH) * 1000 * .87;
   return Math.atan((dh - drop) / (km * 1000)) * 180 / Math.PI;
@@ -46,8 +46,8 @@ export function horizonAt(profile, az) {
   return 0;
 }
 
-/* À l'heure officielle, position() donne −0,35° (réfraction incluse) : le bord du soleil touche alors l'horizon plat.
-   Un horizon sous 0° est ramené à 0 : au-delà, c'est la forêt qui décide. */
+/* At the official time, position() returns −0.35° (refraction included): the sun's edge then touches a flat horizon.
+   A horizon below 0° is raised to 0: beyond that, trees decide. */
 const LIMB = .35;
 export function realEvent(kind, official, profile, sunPos) {
   if (!(official instanceof Date) || !profile) return official;
